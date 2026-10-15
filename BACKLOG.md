@@ -6,8 +6,9 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 
 ## Backlog
 
-- [ ] Test on a real phone (tapping people on the map, print from mobile browsers)
-- [ ] Deploy to Vercel
+- [ ] Fix BLESS card possessive bug ("Mom's friend" reads "Mom's's")
+      Uses the first word of the name; should handle names that already end in 's or contain an apostrophe.
+- [ ] Names get small on phones in fit mode with 30+ people; labels touch at ~150
 
 ### Later, only if needed
 
@@ -36,3 +37,6 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 - [x] Hand-drawn look across the app (Kalam handwriting font for headings and map names, sketched cards, buttons, legend, welcome drawing, BLESS card, list view), keeping the branch colors and Atkinson Hyperlegible for body text and forms
 - [x] Compact, clustered map like the Gospel Catalysts network map: short lines, each branch in its own wedge, each person's people clustered close by; fit mode never enlarges a small map
 - [x] You (the center) are always a circle: no square/circle question when adding or editing yourself; older saved maps still load
+- [x] Hand-drawn, compact map with no rings; you are always a circle
+- [x] Publish to GitHub Pages at robbyambler.github.io/Oikos-map (auto-deploys on push to main)
+- [x] Test on a real phone
