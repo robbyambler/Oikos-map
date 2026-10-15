@@ -14,7 +14,7 @@ Ordinary believers, not ministry professionals. Many will be on a phone, and man
 
 ## Stack
 - Next.js (App Router) + TypeScript + Tailwind
-- Deploy on Vercel
+- Static site on GitHub Pages (robbyambler.github.io/Oikos-map); pushes to main deploy automatically via .github/workflows/pages.yml
 - No database or auth until a real need appears. Ask before adding either.
 
 ## Working Notes
