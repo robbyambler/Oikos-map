@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-paper: #f1f4ef;
+  --color-paper-deep: #e4eae3;
+  --color-mist: #e9eeea;
+  --color-line: #c9d2cc;
+  --color-ink: #1f2a2e;
+  --color-ink-soft: #4a5a5f;
+  --color-pencil: #5d6c70;
+  --color-focus: #2b5fd9;
+  --font-sans: var(--font-body);
+  --font-display: var(--font-hand);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Clear keyboard focus everywhere */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+input:focus-visible {
+  outline-offset: 0;
+}
+.map-node:focus {
+  outline: none;
+}
+.map-node:focus-visible .map-halo {
+  stroke: var(--color-focus);
+  stroke-dasharray: 5 4;
+}
+
+/* Hand-drawn look. Uneven corner radii make boxes and buttons look sketched
+   with a pen instead of ruled. Plain CSS, so it prints the same as on screen. */
+@layer components {
+  .sketch-card {
+    border: 2px solid var(--color-pencil);
+    border-radius: 26px 9px 22px 12px / 11px 22px 9px 26px;
+  }
+  .sketch-pill {
+    border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  }
+  .sketch-box {
+    border-radius: 16px 6px 14px 7px / 7px 14px 6px 16px;
+  }
+  .btn-primary {
+    @apply border-2 border-ink bg-ink px-5 py-2.5 font-semibold text-white hover:bg-[#33454b];
+  }
+  .btn-quiet {
+    @apply border-2 border-ink-soft bg-white px-4 py-2 font-semibold text-ink hover:border-ink;
+  }
+  .btn-primary,
+  .btn-quiet {
+    border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+    transition: transform 120ms ease;
+  }
+  .btn-primary:hover,
+  .btn-quiet:hover {
+    transform: rotate(-0.6deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary:hover,
+    .btn-quiet:hover {
+      transform: none;
+    }
+  }
+}
+
+/* A pen-drawn wavy line under the header. */
+.squiggle-bottom {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='8'%3E%3Cpath d='M0 4 C10 1 18 7 30 4 S50 2 60 4' stroke='%23a3aea9' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  background-size: 60px 8px;
+}
+
+.font-hand,
+.map-label {
+  font-family: var(--font-hand), "Comic Sans MS", cursive;
+}
+
+/* A wavy, pen-drawn line down the left side of each branch in the list view.
+   The line takes its color from the branch (set with the CSS color property). */
+.branch-line {
+  position: relative;
+}
+.branch-line::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 2px;
+  bottom: 6px;
+  width: 6px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='36'%3E%3Cpath d='M3 0 C5.5 9 0.5 18 3 27 C4.5 32 3.5 34 3 36' stroke='black' stroke-width='2.2' fill='none'/%3E%3C/svg%3E") repeat-y;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='36'%3E%3Cpath d='M3 0 C5.5 9 0.5 18 3 27 C4.5 32 3.5 34 3 36' stroke='black' stroke-width='2.2' fill='none'/%3E%3C/svg%3E") repeat-y;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+  body {
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  .print-only * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .print-map svg {
+    width: 100%;
+    max-height: 8.3in;
+  }
+  /* Darker lines on paper, so they hold up on black-and-white printers */
+  .print-map .map-line {
+    stroke-opacity: 0.85;
+  }
+  .print-map {
+    margin: 0.15in 0;
+    break-inside: avoid;
+  }
+}
