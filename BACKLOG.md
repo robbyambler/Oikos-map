@@ -6,8 +6,6 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 
 ## Backlog
 
-- [ ] Fix BLESS card possessive bug ("Mom's friend" reads "Mom's's")
-      Uses the first word of the name; should handle names that already end in 's or contain an apostrophe.
 - [ ] Names get small on phones in fit mode with 30+ people; labels touch at ~150
 
 ### Later, only if needed
@@ -40,3 +38,4 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 - [x] Hand-drawn, compact map with no rings; you are always a circle
 - [x] Publish to GitHub Pages at robbyambler.github.io/Oikos-map (auto-deploys on push to main)
 - [x] Test on a real phone
+- [x] Fix BLESS card possessive bug (now uses the full name and handles names already ending in 's)

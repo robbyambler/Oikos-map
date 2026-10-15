@@ -1,8 +1,13 @@
 import { Person } from "@/lib/people";
 import { LetterDot } from "./Shape";
 
+// "Sarah" -> "Sarah's", "Chris" -> "Chris's", "Mom's" -> "Mom's" (already possessive).
+function possessive(name: string) {
+  return /['\u2019]s$/i.test(name) ? name : `${name}'s`;
+}
+
 const STEPS = [
-  { letter: "B", word: "Begin with prayer", text: (n: string) => `Ask God to work in ${n}'s life, and to open a door for you.` },
+  { letter: "B", word: "Begin with prayer", text: (n: string) => `Ask God to work in ${possessive(n)} life, and to open a door for you.` },
   { letter: "L", word: "Listen", text: (n: string) => `Ask good questions. Learn what ${n} cares about and carries.` },
   { letter: "E", word: "Eat", text: () => `Share a meal or a coffee. Friendship grows around a table.` },
   { letter: "S", word: "Serve", text: (n: string) => `Look for a practical way to help ${n} this month.` },
@@ -11,7 +16,8 @@ const STEPS = [
 
 // A short "now what" for one person, using the BLESS pattern.
 export default function BlessCard({ person, color }: { person: Person; color: string }) {
-  const first = person.name.split(" ")[0];
+  // Use the whole name so labels like "Mom's friend" read correctly.
+  const first = person.name.trim();
   return (
     <section aria-labelledby="bless-heading" className="sketch-card bg-white p-4">
       <h3 id="bless-heading" className="font-display text-xl font-bold">
