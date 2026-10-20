@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Person } from "@/lib/people";
 import { LetterDot } from "./Shape";
 
@@ -25,7 +26,7 @@ export default function BlessCard({ person, color }: { person: Person; color: st
       </h3>
       {person.kind === "believer" && (
         <p className="mt-1 text-sm text-ink-soft">
-          {first} already follows Jesus. Walk with them, and help them map their own oikos too.
+          {first} already follows Jesus. Train and encourage them, and help them map their own oikos, so they can start reaching their people right away.
         </p>
       )}
       <ol className="mt-3 space-y-2">
@@ -34,6 +35,14 @@ export default function BlessCard({ person, color }: { person: Person; color: st
             <LetterDot letter={step.letter} color={color} seed={`${person.id}:${i}`} />
             <span className="pt-0.5 text-[0.95rem] leading-snug">
               <strong>{step.word}.</strong> {step.text(first)}
+              {i === STEPS.length - 1 && (
+                <>
+                  {" "}
+                  <Link href="/share" className="no-print font-semibold text-ink underline underline-offset-2">
+                    What to share
+                  </Link>
+                </>
+              )}
             </span>
           </li>
         ))}

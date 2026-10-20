@@ -10,8 +10,10 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 
 ### Later, only if needed
 
-- [ ] Download or restore a saved copy of the map as a file
 - [ ] Trainer mode for walking a group through mapping their oikos (about 45 minutes)
+- [ ] Guided walkthrough overlay on the live map (only if the tutorial page isn't enough)
+- [ ] Export the map as an SVG picture
+- [ ] Replace the sample wording on /share with the owner's own content
 
 ## Blocked
 
@@ -39,3 +41,6 @@ A simple web app where a visitor builds their oikos (household) map: the people 
 - [x] Publish to GitHub Pages at robbyambler.github.io/Oikos-map (auto-deploys on push to main)
 - [x] Test on a real phone
 - [x] Fix BLESS card possessive bug (now uses the full name and handles names already ending in 's)
+- [x] Save a copy of the map as a file (oikos-map.json) and open a saved copy, with strict checks on the file and a confirm before replacing a map
+- [x] "How it works" tutorial page (/learn) with five short steps and an example map, linked from the welcome screen and the toolbar
+- [x] "What to share" page (/share): original three-circles walkthrough with a hand-drawn diagram that builds step by step, your-story prompt, practice and let-go notes, credit to Jimmy Scroggins and NAMB, World English Bible verses; all wording in lib/shareContent.ts; linked from /learn, the BLESS card, the toolbar, and the welcome screen

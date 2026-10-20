@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Kind,
   Person,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/people";
 import { sketchLine } from "@/lib/sketch";
 import { loadPeople, savePeople } from "@/lib/storage";
+import { downloadBackup, readBackup } from "@/lib/backup";
 import MapView from "./MapView";
 import ListView from "./ListView";
 import PersonForm from "./PersonForm";
@@ -45,6 +47,8 @@ export default function OikosApp() {
   const [view, setView] = useState<"map" | "list">("map");
   const [fit, setFit] = useState(true);
   const [announcement, setAnnouncement] = useState("");
+  const [fileError, setFileError] = useState("");
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Saving can fail (e.g. private browsing). We only flag it once.
@@ -105,6 +109,72 @@ export default function OikosApp() {
     setMode("view");
   }
 
+  // ---------- Save a copy / open a saved copy ----------
+  function saveCopy() {
+    setFileError("");
+    downloadBackup(people);
+    setAnnouncement("Saved a copy of your map to this device.");
+  }
+
+  function chooseFile() {
+    setFileError("");
+    fileInput.current?.click();
+  }
+
+  async function openFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
+    // Clear the picker so choosing the same file again still works.
+    input.value = "";
+    if (!file) return;
+    if (file.size > 5_000_000) {
+      setFileError("That file is too big to be an Oikos Map. Try another file.");
+      return;
+    }
+    let text: string;
+    try {
+      text = await file.text();
+    } catch {
+      setFileError("We couldn't read that file. Try again, or choose another file.");
+      return;
+    }
+    const result = readBackup(text);
+    if (!result.ok) {
+      setFileError(result.message);
+      return;
+    }
+    if (
+      people.length > 0 &&
+      !window.confirm("Replace the map on this device with the saved copy? Your current map will be gone.")
+    ) {
+      return;
+    }
+    const newRoot = findRoot(result.people);
+    setPeople(result.people);
+    setSelectedId(newRoot?.id ?? null);
+    setMode("view");
+    setFileError("");
+    setAnnouncement(`Opened your saved map with ${result.people.length} ${result.people.length === 1 ? "person" : "people"}.`);
+  }
+
+  const filePicker = (
+    <input
+      ref={fileInput}
+      type="file"
+      accept=".json,application/json"
+      onChange={openFile}
+      className="hidden"
+      tabIndex={-1}
+      aria-hidden="true"
+    />
+  );
+
+  const fileErrorNote = fileError && (
+    <p role="alert" className="sketch-box bg-[#FCEBDD] px-3 py-2 text-sm">
+      {fileError}
+    </p>
+  );
+
   const privacyNote = (
     <p className="text-sm text-ink-soft">
       <span aria-hidden="true">🔒 </span>
@@ -131,10 +201,22 @@ export default function OikosApp() {
             <p className="mt-5 max-w-prose text-lg leading-relaxed">
               <em>Oikos</em> is the Greek word for household: the family, friends, and neighbors in your everyday
               life. When Paul told a jailer, &ldquo;Believe in the Lord Jesus, and you will be saved, you and your
-              household&rdquo; (Acts 16:31), the good news was meant to travel through his whole oikos.
+              household&rdquo; (Acts 16:31, ESV), the good news was meant to travel through his whole oikos.
+            </p>
+            <p className="mt-3 max-w-prose text-lg leading-relaxed">
+              And everyone you know has an oikos of their own, one that only they can reach.
             </p>
           </div>
           <WelcomeSketch />
+        </div>
+
+        <div className="no-print mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <Link href="/learn" className="btn-quiet inline-block border-ink text-lg">
+            How does this work?
+          </Link>
+          <Link href="/share" className="font-semibold text-ink underline underline-offset-2">
+            What do I say? See a simple way to share
+          </Link>
         </div>
 
         <div className="sketch-card mt-10 bg-white p-5 sm:p-7">
@@ -153,6 +235,17 @@ export default function OikosApp() {
         <div className="mt-6 space-y-2">
           {privacyNote}
           {storageWarning}
+          <p className="text-sm text-ink-soft">
+            Already saved a copy of your map?{" "}
+            <button type="button" onClick={chooseFile} className="font-semibold text-ink underline underline-offset-2">
+              Open a saved copy
+            </button>
+          </p>
+          {fileErrorNote}
+          {filePicker}
+          <p aria-live="polite" className="sr-only">
+            {announcement}
+          </p>
         </div>
       </main>
     );
@@ -197,6 +290,25 @@ export default function OikosApp() {
               </button>
             </div>
           </div>
+          <div className="mx-auto mt-3 flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2">
+            <button type="button" onClick={saveCopy} className="btn-quiet text-sm">
+              Save a copy
+            </button>
+            <button type="button" onClick={chooseFile} className="btn-quiet text-sm">
+              Open a saved copy
+            </button>
+            {filePicker}
+            <p className="text-sm text-ink-soft">The file stays on your device.</p>
+            <div className="ml-auto flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/learn" className="text-sm font-semibold text-ink underline underline-offset-2">
+                How does this work?
+              </Link>
+              <Link href="/share" className="text-sm font-semibold text-ink underline underline-offset-2">
+                What to share
+              </Link>
+            </div>
+          </div>
+          {fileError && <div className="mx-auto mt-3 max-w-6xl">{fileErrorNote}</div>}
         </header>
 
         <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 gap-6 px-4 py-5 lg:grid-cols-[minmax(0,1fr)_380px]">
